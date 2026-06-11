@@ -1,0 +1,44 @@
+# configs/features.yaml
+# Controls which feature groups are computed and their parameters.
+# Set any group to false to skip it during development (speeds up iteration).
+
+feature_groups:
+  application:    true   # features from the main application table
+  bureau:         true   # aggregations from bureau.csv + bureau_balance.csv
+  previous_app:   true   # aggregations from previous_application.csv
+  pos_cash:       true   # aggregations from POS_CASH_balance.csv
+  installments:   true   # aggregations from installments_payments.csv
+  credit_card:    true   # aggregations from credit_card_balance.csv
+
+application:
+  # Ratio features to engineer from the main table
+  create_ratios: true
+  # Days columns to convert to positive years
+  days_cols:
+    - DAYS_BIRTH
+    - DAYS_EMPLOYED
+    - DAYS_REGISTRATION
+    - DAYS_ID_PUBLISH
+    - DAYS_LAST_PHONE_CHANGE
+
+bureau:
+  # Which aggregation functions to apply to numeric columns
+  agg_functions: [mean, max, min, sum, std, count]
+  # Whether to include bureau_balance monthly status features
+  include_balance: true
+
+previous_app:
+  agg_functions: [mean, max, min, sum, count]
+  # Only use approved applications for some aggregations
+  approved_only_aggs: true
+
+installments:
+  agg_functions: [mean, max, min, sum, std, count]
+  # Days past due threshold to create binary flag
+  dpd_threshold: 0
+
+pos_cash:
+  agg_functions: [mean, max, min, sum, count]
+
+credit_card:
+  agg_functions: [mean, max, min, sum, std, count]

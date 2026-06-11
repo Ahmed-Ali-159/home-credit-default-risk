@@ -1,0 +1,58 @@
+# configs/model.yaml
+# Default model hyperparameters.
+# Optuna will write its best params to configs/model_best.yaml (gitignored by default,
+# but you can commit it once you're happy with the tuning run).
+
+experiment_name: home-credit-default-risk
+
+cv:
+  n_splits: 5
+  shuffle: true
+  random_seed: 42
+
+lightgbm:
+  objective: binary
+  metric: auc
+  boosting_type: gbdt
+  n_estimators: 1000
+  learning_rate: 0.05
+  num_leaves: 31
+  max_depth: -1
+  min_child_samples: 20
+  colsample_bytree: 0.8
+  subsample: 0.8
+  subsample_freq: 1
+  reg_alpha: 0.1
+  reg_lambda: 0.1
+  # Class imbalance: set to ~(negative_count / positive_count) at runtime
+  scale_pos_weight: null   # computed dynamically from training data
+  early_stopping_rounds: 100
+  verbose: -1
+  random_state: 42
+  n_jobs: -1
+
+xgboost:
+  objective: binary:logistic
+  eval_metric: auc
+  n_estimators: 1000
+  learning_rate: 0.05
+  max_depth: 6
+  min_child_weight: 5
+  colsample_bytree: 0.8
+  subsample: 0.8
+  reg_alpha: 0.1
+  reg_lambda: 1.0
+  early_stopping_rounds: 100
+  verbosity: 0
+  random_state: 42
+  n_jobs: -1
+
+optuna:
+  n_trials: 50
+  direction: maximize    # maximise AUC
+  timeout: 3600          # stop after 1 hour if n_trials not reached
+  study_name: lgbm-hpo
+
+mlflow:
+  tracking_uri: mlruns   # overridden by MLFLOW_TRACKING_URI env var if set
+  artifact_location: mlartifacts

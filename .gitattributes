@@ -1,0 +1,20 @@
+# Auto-detect text files and normalize line endings to LF in the repo
+* text=auto eol=lf
+
+# Force LF for files that must run on Linux (shell scripts, Docker, CI)
+*.sh text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+.github/workflows/*.yml text eol=lf
+dvc.yaml text eol=lf
+
+# Windows-specific files keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files — no line ending conversion
+*.pkl binary
+*.parquet binary
+*.zip binary
+*.png binary
+*.jpg binary

@@ -1,0 +1,44 @@
+# docker/docker-compose.yml
+# Local development stack.
+# Usage:  docker compose -f docker/docker-compose.yml up
+#
+# Services:
+#   api      — FastAPI prediction service
+#   mlflow   — MLflow tracking server (local)
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - APP_ENV=development
+      - LOG_LEVEL=DEBUG
+    env_file:
+      - ../.env
+    volumes:
+      # Mount models dir so the container can load the latest trained model
+      - ../models:/app/models:ro
+    depends_on:
+      - mlflow
+    restart: unless-stopped
+
+  mlflow:
+    image: python:3.11-slim
+    working_dir: /mlflow
+    command: >
+      bash -c "pip install mlflow --quiet &&
+               mlflow server
+               --host 0.0.0.0
+               --port 5000
+               --backend-store-uri /mlflow/mlruns
+               --default-artifact-root /mlflow/mlartifacts"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../mlruns:/mlflow/mlruns
+      - ../mlartifacts:/mlflow/mlartifacts
+    restart: unless-stopped
