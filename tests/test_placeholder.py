@@ -8,7 +8,7 @@ def test_project_imports() -> None:
     import hydra  # noqa: F401
     import lightgbm  # noqa: F401
     import mlflow  # noqa: F401
+    import optuna  # noqa: F401
     import pandas  # noqa: F401
     import pydantic  # noqa: F401
     import shap  # noqa: F401
-    import optuna  # noqa: F401
