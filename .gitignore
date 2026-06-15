@@ -1,3 +1,85 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── uv ───────────────────────────────────────────────────────────────────────
+# uv.lock IS committed — it pins exact versions for reproducibility
+# Do NOT add uv.lock here
+
+# ── Data files — managed by DVC, never by git ────────────────────────────────
+data/raw/
+data/interim/
+data/processed/
+*.csv
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+
+# ── Model artifacts — tracked by MLflow / DVC ────────────────────────────────
+*.model
+*.joblib
+models/
+
+# ── MLflow local tracking ─────────────────────────────────────────────────────
+mlruns/
+mlartifacts/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example     # the example template IS committed so teammates know what's needed
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Testing / coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+.ruff_cache/
+
+# ── Hydra runtime outputs ─────────────────────────────────────────────────────
+outputs/
+multirun/
+
+# ── DVC internal (the .dvc/ folder itself IS committed; cache is not) ─────────
+/tmp/
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
