@@ -24,6 +24,7 @@ ENV/
 # data/raw/
 data/interim/
 data/processed/
+data/raw_sample/
 *.csv
 *.parquet
 *.feather
