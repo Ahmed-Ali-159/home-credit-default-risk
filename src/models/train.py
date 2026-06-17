@@ -31,10 +31,11 @@ from omegaconf import DictConfig
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from src.models.mlflow_utils import promote_if_better, setup_mlflow
-
-# Add project root to sys.path for imports
+# This MUST come before any 'from src...' imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+# Now this import will work, because the project root is on sys.path
+from src.models.mlflow_utils import promote_if_better, setup_mlflow
 
 logging.basicConfig(
     level=logging.INFO,
@@ -281,8 +282,8 @@ def main(cfg: DictConfig) -> None:
         final_model.fit(X_full.values, y_full)
 
         # Log model to MLflow + register, then promote if it beats Production
-        mlflow.lightgbm.log_model(final_model, artifact_path="model")
-        model_uri = f"runs:/{mlflow.active_run().info.run_id}/model"
+        logged_model = mlflow.lightgbm.log_model(final_model, name="model")
+        model_uri = logged_model.model_uri
         promote_if_better(
             model_name=cfg.mlflow.model_name,
             model_uri=model_uri,
