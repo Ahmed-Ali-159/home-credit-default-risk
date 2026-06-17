@@ -4,6 +4,7 @@ tests/conftest.py
 Adds the project root to sys.path so that 'src' and 'api' imports
 work in all test files without installing the package.
 """
+
 import sys
 from pathlib import Path
 

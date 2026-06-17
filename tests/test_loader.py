@@ -14,13 +14,14 @@ from src.data.loader import fix_application_anomalies
 
 
 class TestFixApplicationAnomalies:
-
     def test_days_employed_sentinel_replaced(self):
-        df = pd.DataFrame({
-            "DAYS_EMPLOYED": [-1000, 365243],
-            "DAYS_LAST_PHONE_CHANGE": [-100, -200],
-            "CODE_GENDER": ["M", "F"],
-        })
+        df = pd.DataFrame(
+            {
+                "DAYS_EMPLOYED": [-1000, 365243],
+                "DAYS_LAST_PHONE_CHANGE": [-100, -200],
+                "CODE_GENDER": ["M", "F"],
+            }
+        )
         result = fix_application_anomalies(df)
         assert result["DAYS_EMPLOYED"].isna().sum() == 1
         assert "DAYS_EMPLOYED_ANOMALY" in result.columns
