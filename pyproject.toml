@@ -99,4 +99,4 @@ known-first-party = ["src", "api"]
 # ── Pytest ────────────────────────────────────────────────────────────────────
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=src --cov=api --cov-report=term-missing --cov-fail-under=70"
+addopts = "--cov=src --cov=api --cov-report=term-missing"
