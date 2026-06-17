@@ -6,8 +6,8 @@ Returns one row per SK_ID_CURR with the prefix 'buro_'.
 
 Why this is its own module:
     Bureau is the most complex feature group — it's a two-hop aggregation:
-      bureau_balance → aggregate to loan level (SK_ID_BUREAU)
-      bureau (joined with above) → aggregate to client level (SK_ID_CURR)
+      bureau_balance -> aggregate to loan level (SK_ID_BUREAU)
+      bureau (joined with above) -> aggregate to client level (SK_ID_CURR)
 
     Bureau also has the most variation in CREDIT_ACTIVE statuses, requiring
     separate aggregations for Active vs Closed credits to capture

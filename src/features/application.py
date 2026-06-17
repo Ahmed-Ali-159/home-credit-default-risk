@@ -80,10 +80,10 @@ def encode_categoricals(df: pd.DataFrame, high_card_cols: list[str]) -> pd.DataF
     Encode categorical features.
 
     Strategy by cardinality:
-      - 2 unique values    → LabelEncoder (Y/N, M/F → 0/1)
-      - high_card_cols     → leave as strings (target-encoded inside CV later)
-      - ≤10 unique values  → one-hot encoded with pd.get_dummies
-      - everything else    → drop (avoids exploding the feature space)
+      - 2 unique values    -> LabelEncoder (Y/N, M/F -> 0/1)
+      - high_card_cols     -> leave as strings (target-encoded inside CV later)
+      - ≤10 unique values  -> one-hot encoded with pd.get_dummies
+      - everything else    -> drop (avoids exploding the feature space)
 
     Why high_card_cols are NOT encoded here:
         Target encoding must fit on training fold only to prevent leakage.
@@ -150,7 +150,7 @@ def preprocess_application(
     Full preprocessing pipeline for the application table.
 
     This is the public entry point — call this from feature build orchestrator.
-    Internally chains: fix_anomalies → engineer_features → encode_categoricals.
+    Internally chains: fix_anomalies -> engineer_features -> encode_categoricals.
 
     Args:
         df: Raw application_{train|test} DataFrame.
