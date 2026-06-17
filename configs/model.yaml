@@ -53,6 +53,13 @@ optuna:
   timeout: 3600          # stop after 1 hour if n_trials not reached
   study_name: lgbm-hpo
 
+# mlflow:
+#   tracking_uri: mlruns   # overridden by MLFLOW_TRACKING_URI env var if set
+#   artifact_location: mlartifacts
+
 mlflow:
-  tracking_uri: mlruns   # overridden by MLFLOW_TRACKING_URI env var if set
-  artifact_location: mlartifacts
+  tracking_uri: https://dagshub.com/Ahmed-Ali-159/home-credit-default-risk.mlflow
+  experiment_name: home-credit-default-risk
+  model_name: home-credit-lgbm
+  promotion_threshold: 0.001
+

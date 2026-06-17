@@ -36,7 +36,8 @@ data/raw_sample/
 # ── Model artifacts — tracked by MLflow / DVC ────────────────────────────────
 *.model
 *.joblib
-models/
+# models/
+/models/
 
 # ── MLflow local tracking ─────────────────────────────────────────────────────
 mlruns/
