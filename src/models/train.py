@@ -2,7 +2,7 @@
 src/models/train.py
 
 DVC pipeline entry point for the 'train' stage.
-Reads processed parquets → runs 5-fold CV with LightGBM → saves model + metrics.
+Reads processed parquets -> runs 5-fold CV with LightGBM -> saves model + metrics.
 
 Run directly:   python src/models/train.py
 Run via DVC:    dvc repro train
@@ -31,13 +31,21 @@ from omegaconf import DictConfig
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from src.models.explain import build_explainer, log_shap_to_mlflow
+# from src.models.explain import build_explainer, log_shap_to_mlflow
+
+# # This MUST come before any 'from src...' imports
+# sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+# # Now this import will work, because the project root is on sys.path
+# from src.models.mlflow_utils import promote_if_better, setup_mlflow
 
 # This MUST come before any 'from src...' imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-# Now this import will work, because the project root is on sys.path
+# Now these will resolve correctly
 from src.models.mlflow_utils import promote_if_better, setup_mlflow
+from src.models.explain import build_explainer, log_shap_to_mlflow
+
 
 logging.basicConfig(
     level=logging.INFO,

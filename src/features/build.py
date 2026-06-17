@@ -2,7 +2,7 @@
 src/features/build.py
 
 DVC pipeline entry point for the 'build_features' stage.
-Reads raw CSVs directly → builds 6 feature groups → writes processed parquets.
+Reads raw CSVs directly -> builds 6 feature groups -> writes processed parquets.
 
 Run directly:   python src/features/build.py
 Run via DVC:    dvc repro build_features
@@ -58,7 +58,7 @@ def save_parquet(df: pd.DataFrame, path: str | Path, name: str) -> None:
     df.to_parquet(path, index=False, engine="pyarrow", compression="snappy")
     # Log the file size in MB
     size_mb = Path(path).stat().st_size / 1e6
-    logger.info(f"Saved {name}: {df.shape} → {path} ({size_mb:.1f} MB)")
+    logger.info(f"Saved {name}: {df.shape} -> {path} ({size_mb:.1f} MB)")
 
 
 def drop_high_missing(

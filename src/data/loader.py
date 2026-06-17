@@ -279,7 +279,7 @@ def load_all_tables(cfg) -> dict[str, pd.DataFrame]:
 
     Why cfg instead of hardcoded paths:
         cfg.paths.* comes from configs/data.yaml.
-        Change the path in one YAML file → all scripts update.
+        Change the path in one YAML file -> all scripts update.
         Hardcoded paths break on every new machine and in Docker.
     """
     return {
