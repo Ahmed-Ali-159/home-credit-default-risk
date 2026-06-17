@@ -23,14 +23,14 @@ from pathlib import Path
 import hydra
 import joblib
 import lightgbm as lgb
+import mlflow
+import mlflow.lightgbm
 import numpy as np
 import pandas as pd
 from omegaconf import DictConfig
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-import mlflow
-import mlflow.lightgbm
 from src.models.mlflow_utils import promote_if_better, setup_mlflow
 
 # Add project root to sys.path for imports
@@ -220,7 +220,7 @@ def main(cfg: DictConfig) -> None:
     # ── MLflow setup ──────────────────────────────────────────
     # Must happen before any mlflow.log_* calls
     setup_mlflow(cfg)
-    
+
     # ── Load features ─────────────────────────────────────────
     logger.info("\nLoading processed feature parquets")
     train_df = pd.read_parquet(data_cfg.paths.features_train)
@@ -315,7 +315,7 @@ def main(cfg: DictConfig) -> None:
         )
         oof_df.to_parquet(models_dir / "oof_predictions.parquet", index=False)
 
-        logger.info(f"MLflow run ID: {mlflow.active_run().info.run_id}")        
+        logger.info(f"MLflow run ID: {mlflow.active_run().info.run_id}")
 
     logger.info("\n" + "=" * 60)
     logger.info("train stage complete")
