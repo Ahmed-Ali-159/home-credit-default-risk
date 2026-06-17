@@ -38,6 +38,7 @@ data/raw_sample/
 *.joblib
 # models/
 /models/
+reports/
 
 # ── MLflow local tracking ─────────────────────────────────────────────────────
 mlruns/

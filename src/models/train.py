@@ -31,6 +31,8 @@ from omegaconf import DictConfig
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
+from src.models.explain import build_explainer, log_shap_to_mlflow
+
 # This MUST come before any 'from src...' imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -290,6 +292,15 @@ def main(cfg: DictConfig) -> None:
             new_auc=results["overall_auc"],
             threshold=cfg.mlflow.promotion_threshold,
         )
+
+        # ── SHAP ────────────────────────────────────────────────────
+        logger.info("Generating SHAP explanations")
+        sample_size = min(2000, len(X_full))
+        X_sample = X_full.sample(sample_size, random_state=cfg.cv.random_seed).values
+
+        explainer = build_explainer(final_model)
+        log_shap_to_mlflow(explainer, X_sample, feature_cols)
+        joblib.dump(explainer, models_dir / "shap_explainer.pkl")
 
         # Save local artifacts (DVC tracks these, FastAPI fallback)
         joblib.dump(final_model, models_dir / "lgbm_best.pkl")

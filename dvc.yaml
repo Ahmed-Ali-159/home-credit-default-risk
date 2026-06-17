@@ -53,6 +53,7 @@ stages:
       - models/lgbm_best.pkl
       - models/target_encoders.pkl
       - models/feature_cols.pkl
+      - models/shap_explainer.pkl
       - models/oof_predictions.parquet
       - data/processed/submission.csv:
           cache: false
