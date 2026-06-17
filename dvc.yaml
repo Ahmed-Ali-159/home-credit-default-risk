@@ -1,21 +1,29 @@
 # dvc.yaml
-# Run the full pipeline with:  dvc repro
-# Run a single stage with:     dvc repro validate_data
-#
+# Simplified 3-stage pipeline (no Pydantic validation stage).
+# Run full pipeline:  dvc repro
+# Run single stage:   dvc repro train
+
 # DVC tracks content hashes of deps and outs.
 # If nothing changed, the stage is skipped — fast incremental runs.
 
 stages:
 
-  # ── Stage 1: Validate raw data ─────────────────────────────────────────────
-  # Reads raw CSVs, runs Pydantic schema validation, writes clean parquets.
-  # If this stage fails, it means the data you downloaded is malformed.
-  validate_data:
-    cmd: python src/data/validate.py
+  # ── Stage 1: Feature engineering ──────────────────────────────────────────
+  # Reads raw CSVs directly, builds all feature groups, writes processed parquets.
+  build_features:
+    cmd: python src/features/build.py
     deps:
-      - src/data/validate.py
-      - src/data/schemas.py
+      - src/features/build.py
+      - src/features/application.py
+      - src/features/bureau.py
+      - src/features/previous_app.py
+      - src/features/pos_cash.py
+      - src/features/installments.py
+      - src/features/credit_card.py
+      - src/features/cross_table.py
+      - src/data/loader.py
       - configs/data.yaml
+      - configs/features.yaml
       - data/raw/application_train.csv
       - data/raw/application_test.csv
       - data/raw/bureau.csv
@@ -25,67 +33,29 @@ stages:
       - data/raw/installments_payments.csv
       - data/raw/credit_card_balance.csv
     outs:
-      - data/interim/application_train_validated.parquet
-      - data/interim/application_test_validated.parquet
-      - data/interim/bureau_validated.parquet
-      - data/interim/bureau_balance_validated.parquet
-      - data/interim/previous_app_validated.parquet
-      - data/interim/pos_cash_validated.parquet
-      - data/interim/installments_validated.parquet
-      - data/interim/credit_card_validated.parquet
-
-  # ── Stage 2: Feature engineering ───────────────────────────────────────────
-  # Reads validated parquets, builds all feature groups, merges into one
-  # wide DataFrame per split, writes processed parquets.
-  build_features:
-    cmd: python src/features/build.py
-    deps:
-      - src/features/build.py
-      - src/features/application.py
-      - src/features/bureau.py
-      - src/features/previous_app.py
-      - src/features/balances.py
-      - configs/data.yaml
-      - configs/features.yaml
-      - data/interim/application_train_validated.parquet
-      - data/interim/application_test_validated.parquet
-      - data/interim/bureau_validated.parquet
-      - data/interim/bureau_balance_validated.parquet
-      - data/interim/previous_app_validated.parquet
-      - data/interim/pos_cash_validated.parquet
-      - data/interim/installments_validated.parquet
-      - data/interim/credit_card_validated.parquet
-    outs:
       - data/processed/features_train.parquet
       - data/processed/features_test.parquet
     metrics:
-      - data/processed/feature_report.json:   # shape, feature count, null rates
+      - data/processed/feature_report.json:
           cache: false
 
-  # ── Stage 3: Train ─────────────────────────────────────────────────────────
+  # ── Stage 2: Train ────────────────────────────────────────────────────────
   # Reads processed features, runs CV training, logs to MLflow.
   # Outputs the best model artifact and CV metrics.
   train:
     cmd: python src/models/train.py
     deps:
       - src/models/train.py
-      - src/models/evaluate.py
       - configs/model.yaml
       - data/processed/features_train.parquet
-    outs:
-      - models/lgbm_best.pkl:
-          cache: true
-    metrics:
-      - models/cv_metrics.json:
-          cache: false
-
-  # ── Stage 4: Generate submission ───────────────────────────────────────────
-  predict:
-    cmd: python src/models/predict.py
-    deps:
-      - src/models/predict.py
-      - models/lgbm_best.pkl
       - data/processed/features_test.parquet
     outs:
+      - models/lgbm_best.pkl
+      - models/target_encoders.pkl
+      - models/feature_cols.pkl
+      - models/oof_predictions.parquet
       - data/processed/submission.csv:
+          cache: false
+    metrics:
+      - models/cv_metrics.json:
           cache: false

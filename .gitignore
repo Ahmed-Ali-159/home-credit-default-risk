@@ -21,7 +21,7 @@ ENV/
 # Do NOT add uv.lock here
 
 # ── Data files — managed by DVC, never by git ────────────────────────────────
-data/raw/
+# data/raw/
 data/interim/
 data/processed/
 *.csv
