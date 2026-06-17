@@ -10,10 +10,10 @@ import logging
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import shap
 
 logger = logging.getLogger(__name__)
+
 
 def _extract_positive_class_shap(shap_values):
     """
@@ -60,6 +60,7 @@ def explain_single(
         }
         for i in top_idx
     ]
+
 
 def log_shap_to_mlflow(
     explainer: shap.TreeExplainer,
@@ -126,7 +127,9 @@ def plot_waterfall(
     shap_values = _extract_positive_class_shap(explainer.shap_values(X_row))
     base_value = explainer.expected_value
     if isinstance(base_value, (list, np.ndarray)):
-        base_value = base_value[1] if hasattr(base_value, "__len__") and len(base_value) > 1 else base_value
+        base_value = (
+            base_value[1] if hasattr(base_value, "__len__") and len(base_value) > 1 else base_value
+        )
 
     explanation = shap.Explanation(
         values=shap_values[0],

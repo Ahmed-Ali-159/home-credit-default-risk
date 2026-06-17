@@ -43,9 +43,8 @@ from sklearn.model_selection import StratifiedKFold
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # Now these will resolve correctly
-from src.models.mlflow_utils import promote_if_better, setup_mlflow
 from src.models.explain import build_explainer, log_shap_to_mlflow
-
+from src.models.mlflow_utils import promote_if_better, setup_mlflow
 
 logging.basicConfig(
     level=logging.INFO,
