@@ -1386,6 +1386,23 @@ wheels = [
 ]
 
 [[package]]
+name = "groq"
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0b/3a/31c54e35d694ba9c263939ecae0874c78fc51f22b9fb13d2dab50edf6e3c/groq-1.5.0.tar.gz", hash = "sha256:8648388f8668629490bb0eab11252b4cc43316149fda9c6343e9a9577fe7df88", size = 158239, upload-time = "2026-06-21T22:57:30.202Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ce/c3/cac2aee75198c0382a2e6070619a798de2288e01850abb6e999746bb92e3/groq-1.5.0-py3-none-any.whl", hash = "sha256:a927fd75b4a60cb066c408cb4f9647536caf74e241ea75bc57d1810501b8203f", size = 143690, upload-time = "2026-06-21T22:57:29.213Z" },
+]
+
+[[package]]
 name = "gto"
 version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1436,6 +1453,7 @@ dependencies = [
     { name = "dvc-s3" },
     { name = "evidently" },
     { name = "fastapi" },
+    { name = "groq" },
     { name = "hydra-core" },
     { name = "lightgbm" },
     { name = "matplotlib" },
@@ -1486,6 +1504,7 @@ requires-dist = [
     { name = "dvc-s3", specifier = ">=3.2.0" },
     { name = "evidently", specifier = ">=0.4.0" },
     { name = "fastapi", specifier = ">=0.110.0" },
+    { name = "groq", specifier = ">=1.5.0" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27.0" },
     { name = "hydra-core", specifier = ">=1.3.0" },
     { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29.0" },

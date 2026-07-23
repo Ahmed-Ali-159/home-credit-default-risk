@@ -273,6 +273,7 @@ class ExplainResponse(BaseModel):
     model_version: str
     baseline_probability: float
     top_features: list[ShapFeature]
+    narrative_explanation: str
 
 
 class HealthResponse(BaseModel):
