@@ -16,6 +16,7 @@ import pandas as pd
 from api.model_loader import ModelArtifacts
 from api.schemas import ExplainResponse, LoanApplicationRequest, PredictionResponse, ShapFeature
 from src.models.explain import explain_single
+from src.models.narrate import generate_narrative
 
 logger = logging.getLogger(__name__)
 
@@ -247,11 +248,20 @@ def predict_with_explanation(
     baseline = artifacts.explainer.expected_value
     if isinstance(baseline, list):
         baseline = baseline[1]
+    baseline_prob = round(_sigmoid(float(baseline)), 6)
+
+    narrative = generate_narrative(
+        default_probability=probability,
+        risk_tier=_risk_tier(probability),
+        baseline_probability=baseline_prob,
+        top_features=top_features,
+    )
 
     return ExplainResponse(
         default_probability=round(probability, 6),
         risk_tier=_risk_tier(probability),
         model_version=artifacts.model_version,
-        baseline_probability=round(_sigmoid(float(baseline)), 6),
+        baseline_probability=baseline_prob,
         top_features=[ShapFeature(**f) for f in top_features],
+        narrative_explanation=narrative,
     )

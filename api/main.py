@@ -8,6 +8,7 @@ import tempfile
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import FileResponse
 
@@ -21,6 +22,9 @@ from api.schemas import (
     PredictionResponse,
 )
 from src.models.explain import plot_waterfall
+
+load_dotenv()
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 logger = logging.getLogger(__name__)
