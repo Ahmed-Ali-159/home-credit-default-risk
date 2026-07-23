@@ -1,0 +1,59 @@
+# .github/workflows/monitoring.yml
+# Weekly drift detection — runs every Monday at 08:00 UTC.
+# Can also be triggered manually from the Actions tab.
+
+name: Monitoring
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"   # every Monday at 08:00 UTC
+  workflow_dispatch:        # manual trigger from Actions tab
+
+jobs:
+  drift-detection:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Pull reference data from DagsHub
+        env:
+          DAGSHUB_ACCESS_KEY: ${{ secrets.DAGSHUB_ACCESS_KEY }}
+          DAGSHUB_SECRET_KEY: ${{ secrets.DAGSHUB_SECRET_KEY }}
+        run: |
+          uv run dvc remote modify origin --local access_key_id $DAGSHUB_ACCESS_KEY
+          uv run dvc remote modify origin --local secret_access_key $DAGSHUB_SECRET_KEY
+          uv run dvc pull data/processed/features_train.parquet
+
+      - name: Run drift detection
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+        run: uv run python src/monitoring/drift.py
+
+      - name: Upload drift report
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-report-${{ github.sha }}
+          path: |
+            reports/drift_report.html
+            reports/drift_metrics.json
+          retention-days: 90
+
+      - name: Upload metrics summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-metrics-${{ github.sha }}
+          path: reports/drift_metrics.json
+          retention-days: 90
