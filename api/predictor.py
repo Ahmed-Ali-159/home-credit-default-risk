@@ -227,8 +227,8 @@ def _risk_tier(probability: float) -> str:
 
 
 def predict(request: LoanApplicationRequest, artifacts: ModelArtifacts) -> PredictionResponse:
-    X = _preprocess(request, artifacts)
-    probability = float(artifacts.model.predict_proba(X.values)[0, 1])
+    x_input = _preprocess(request, artifacts)
+    probability = float(artifacts.model.predict_proba(x_input.values)[0, 1])
     return PredictionResponse.from_probability(probability, artifacts.model_version)
 
 
@@ -238,21 +238,20 @@ def predict_with_explanation(
     if artifacts.explainer is None:
         raise ValueError("SHAP explainer not loaded. Run dvc repro train to generate it.")
 
-    X = _preprocess(request, artifacts)
-    probability = float(artifacts.model.predict_proba(X.values)[0, 1])
+    x_input = _preprocess(request, artifacts)
+    probability = float(artifacts.model.predict_proba(x_input.values)[0, 1])
     top_features = explain_single(
-        artifacts.explainer, X.values, artifacts.feature_cols, n_top=n_top
+        artifacts.explainer, x_input.values, artifacts.feature_cols, n_top=n_top
     )
 
     baseline = artifacts.explainer.expected_value
     if isinstance(baseline, list):
         baseline = baseline[1]
-    baseline_prob = round(_sigmoid(float(baseline)), 6)
 
     return ExplainResponse(
         default_probability=round(probability, 6),
         risk_tier=_risk_tier(probability),
         model_version=artifacts.model_version,
-        baseline_probability=baseline_prob,
+        baseline_probability=round(_sigmoid(float(baseline)), 6),
         top_features=[ShapFeature(**f) for f in top_features],
     )

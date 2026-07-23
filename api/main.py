@@ -80,7 +80,7 @@ def predict_default(request: LoanApplicationRequest) -> PredictionResponse:
         return predict(request, arts)
     except Exception as e:
         logger.error(f"Prediction failed: {e}", exc_info=True)
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e)) from e
 
 
 @app.post("/explain", response_model=ExplainResponse)
@@ -92,7 +92,7 @@ def explain_prediction(request: LoanApplicationRequest, n_top: int = 10) -> Expl
         return predict_with_explanation(request, arts, n_top=min(n_top, 50))
     except Exception as e:
         logger.error(f"Explanation failed: {e}", exc_info=True)
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e)) from e
 
 
 @app.post("/explain/plot")
@@ -103,11 +103,11 @@ def explain_plot(request: LoanApplicationRequest, n_top: int = 10) -> FileRespon
     try:
         from api.predictor import _preprocess
 
-        X = _preprocess(request, arts)
+        x_input = _preprocess(request, arts)
         tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
         plot_waterfall(
             arts.explainer,
-            X.values,
+            x_input.values,
             arts.feature_cols,
             output_path=Path(tmp.name),
             max_display=min(n_top, 20),
@@ -115,4 +115,4 @@ def explain_plot(request: LoanApplicationRequest, n_top: int = 10) -> FileRespon
         return FileResponse(tmp.name, media_type="image/png", filename="shap_waterfall.png")
     except Exception as e:
         logger.error(f"Plot failed: {e}", exc_info=True)
-        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e)) from e
