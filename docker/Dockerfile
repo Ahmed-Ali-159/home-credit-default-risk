@@ -23,6 +23,9 @@ FROM python:3.11-slim AS runtime
 
 WORKDIR /app
 
+# Install OpenMP — required by LightGBM
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user for security (never run as root in production)
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --shell /bin/bash --create-home appuser
