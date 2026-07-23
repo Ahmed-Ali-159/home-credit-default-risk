@@ -3,11 +3,14 @@
 """Minimal smoke tests — crashes, response shape, validation."""
 
 import numpy as np
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
 from api.main import app
 from api.model_loader import ModelArtifacts
+
+FEATURE_COLS = ["AMT_CREDIT", "AMT_INCOME_TOTAL", "EXT_SOURCE_2"]
 
 
 @pytest.fixture
@@ -20,7 +23,7 @@ def mock_artifacts():
     return ModelArtifacts(
         model=model,
         encoders={},
-        feature_cols=["AMT_CREDIT", "AMT_INCOME_TOTAL", "EXT_SOURCE_2"],
+        feature_cols=FEATURE_COLS,
         explainer=None,
         model_version="v1-test",
         cv_auc=0.787,
@@ -28,9 +31,15 @@ def mock_artifacts():
 
 
 @pytest.fixture
-def client(mock_artifacts):
+def client(mock_artifacts, monkeypatch):
     import api.main as main_module
+    import api.predictor as predictor_module
 
+    # Bypass full preprocessing — return a minimal aligned DataFrame
+    def mock_preprocess(request, artifacts):
+        return pd.DataFrame([[0.0] * len(FEATURE_COLS)], columns=FEATURE_COLS)
+
+    monkeypatch.setattr(predictor_module, "_preprocess", mock_preprocess)
     main_module._artifacts = mock_artifacts
     return TestClient(app)
 
